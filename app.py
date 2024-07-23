@@ -7,7 +7,7 @@ import re
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode='eventlet')
 DOWNLOAD_FOLDER = 'static/downloads'
 
 if not os.path.exists(DOWNLOAD_FOLDER):
@@ -60,4 +60,4 @@ def download():
     return send_file(zip_path, as_attachment=True)
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app)
