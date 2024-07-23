@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube Playlist Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f3f3;
+        }
+        .container {
+            margin-top: 50px;
+            display: inline-block;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #progress-container {
+            width: 100%;
+            background-color: #ddd;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        #progress-bar {
+            width: 0;
+            height: 30px;
+            background: linear-gradient(to right, #4caf50, #8bc34a);
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            transition: width 0.4s ease;
+        }
+        .progress-info {
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const socket = io();
+
+            socket.on('progress', (data) => {
+                const progressBar = document.getElementById('progress-bar');
+                const percent = data.percent;
+                const speed = data.speed;
+                const eta = data.eta;
+
+                progressBar.style.width = percent;
+                progressBar.innerHTML = percent;
+
+                document.getElementById('speed').innerHTML = `Speed: ${speed}`;
+                document.getElementById('eta').innerHTML = `ETA: ${eta}`;
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Playlist Downloader</h1>
+        <form id="download-form" action="/download" method="post">
+            <label for="playlist_url">Playlist URL:</label>
+            <input type="text" id="playlist_url" name="playlist_url" required>
+            <button type="submit">Download Playlist</button>
+        </form>
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        <div class="progress-info">
+            <p id="speed">Speed: N/A</p>
+            <p id="eta">ETA: N/A</p>
+        </div>
+    </div>
+</body>
+</html>
