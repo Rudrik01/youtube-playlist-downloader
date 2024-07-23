@@ -75,6 +75,10 @@
                 document.getElementById('speed').innerHTML = `Speed: ${speed}`;
                 document.getElementById('eta').innerHTML = `ETA: ${eta}`;
             });
+
+            socket.on('downloaded_count', (data) => {
+                document.getElementById('downloaded-count').innerHTML = `Videos Downloaded: ${data.count}`;
+            });
         });
     </script>
 </head>
@@ -92,6 +96,7 @@
         <div class="progress-info">
             <p id="speed">Speed: N/A</p>
             <p id="eta">ETA: N/A</p>
+            <p id="downloaded-count">Videos Downloaded: 0</p>
         </div>
     </div>
 </body>

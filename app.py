@@ -18,7 +18,11 @@ def strip_ansi_codes(text):
     ansi_escape = re.compile(r'\x1B[@-_][0-?]*[ -/]*[@-~]')
     return ansi_escape.sub('', text)
 
+# Counter for downloaded videos
+downloaded_videos_count = 0
+
 def my_hook(d):
+    global downloaded_videos_count
     if d['status'] == 'downloading':
         progress = {
             'percent': strip_ansi_codes(d['_percent_str']).strip(),
@@ -26,6 +30,9 @@ def my_hook(d):
             'eta': strip_ansi_codes(d.get('_eta_str', 'N/A')).strip()
         }
         socketio.emit('progress', progress)
+    elif d['status'] == 'finished':
+        downloaded_videos_count += 1
+        socketio.emit('downloaded_count', {'count': downloaded_videos_count})
 
 @app.route('/')
 def index():
@@ -33,6 +40,9 @@ def index():
 
 @app.route('/download', methods=['POST'])
 def download():
+    global downloaded_videos_count
+    downloaded_videos_count = 0  # Reset counter for each download request
+
     playlist_url = request.form['playlist_url']
     
     ydl_opts = {
@@ -61,3 +71,4 @@ def download():
 
 if __name__ == '__main__':
     socketio.run(app)
+    
